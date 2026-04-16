@@ -5,11 +5,6 @@ import type { NetworkClientId } from '@metamask/network-controller';
 import { createModuleLogger, add0x } from '@metamask/utils';
 import type { Hex } from '@metamask/utils';
 
-import {
-  getEIP7702ContractAddresses,
-  getEIP7702SupportedChains,
-} from './feature-flags';
-import { rpcRequest } from './provider';
 import { ABI_IERC7821 } from '../constants';
 import { projectLogger } from '../logger';
 import type { TransactionControllerMessenger } from '../TransactionController';
@@ -19,6 +14,11 @@ import type {
   AuthorizationList,
   TransactionMeta,
 } from '../types';
+import {
+  getEIP7702ContractAddresses,
+  getEIP7702SupportedChains,
+} from './feature-flags';
+import { rpcRequest } from './provider';
 
 export const DELEGATION_PREFIX = '0xef0100';
 export const BATCH_FUNCTION_NAME = 'execute';
@@ -122,10 +122,9 @@ export async function isAccountUpgradedToEIP7702(
 
   const isSupported = Boolean(
     delegationAddress &&
-      contractAddresses.some(
-        (contract) =>
-          contract.toLowerCase() === delegationAddress.toLowerCase(),
-      ),
+    contractAddresses.some(
+      (contract) => contract.toLowerCase() === delegationAddress.toLowerCase(),
+    ),
   );
 
   return {

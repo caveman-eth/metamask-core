@@ -12,7 +12,7 @@ import {
   recoverEIP7702Authorization,
 } from '@metamask/eth-sig-util';
 import SimpleKeyring from '@metamask/eth-simple-keyring';
-import { KeyringType } from '@metamask/keyring-api';
+import { KeyringType } from '@metamask/keyring-api/v2';
 import type { EthKeyring } from '@metamask/keyring-internal-api';
 import type { KeyringClass } from '@metamask/keyring-utils';
 import { MOCK_ANY_NAMESPACE, Messenger } from '@metamask/messenger';
@@ -26,6 +26,19 @@ import { bytesToHex, isValidHexAddress } from '@metamask/utils';
 import type { Hex } from '@metamask/utils';
 import { Mutex } from 'async-mutex';
 
+import MockEncryptor, {
+  DECRYPTION_ERROR,
+  MOCK_ENCRYPTION_KEY,
+  SALT,
+} from '../tests/mocks/mockEncryptor';
+import { MockErc4337Keyring } from '../tests/mocks/mockErc4337Keyring';
+import {
+  HardwareWalletError,
+  MockHardwareKeyring,
+} from '../tests/mocks/mockHardwareKeyring';
+import { MockKeyring } from '../tests/mocks/mockKeyring';
+import MockShallowKeyring from '../tests/mocks/mockShallowKeyring';
+import { buildMockTransaction } from '../tests/mocks/mockTransaction';
 import { KeyringControllerErrorMessage } from './constants';
 import { KeyringControllerError } from './errors';
 import type {
@@ -46,19 +59,6 @@ import {
   isCustodyKeyring,
   keyringBuilderFactory,
 } from './KeyringController';
-import MockEncryptor, {
-  DECRYPTION_ERROR,
-  MOCK_ENCRYPTION_KEY,
-  SALT,
-} from '../tests/mocks/mockEncryptor';
-import { MockErc4337Keyring } from '../tests/mocks/mockErc4337Keyring';
-import {
-  HardwareWalletError,
-  MockHardwareKeyring,
-} from '../tests/mocks/mockHardwareKeyring';
-import { MockKeyring } from '../tests/mocks/mockKeyring';
-import MockShallowKeyring from '../tests/mocks/mockShallowKeyring';
-import { buildMockTransaction } from '../tests/mocks/mockTransaction';
 
 type AllKeyringControllerActions = MessengerActions<KeyringControllerMessenger>;
 
@@ -86,9 +86,8 @@ const input =
 const seedWords =
   'puzzle seed penalty soldier say clay field arctic metal hen cage runway';
 const uint8ArraySeed = new Uint8Array(
-  new Uint16Array(
-    seedWords.split(' ').map((word) => wordlist.indexOf(word)),
-  ).buffer,
+  new Uint16Array(seedWords.split(' ').map((word) => wordlist.indexOf(word)))
+    .buffer,
 );
 const privateKey =
   '1e4e6a4c0c077f4ae8ddfbf372918e61dd0fb4a4cfa592cb16e7546d505e68fc';

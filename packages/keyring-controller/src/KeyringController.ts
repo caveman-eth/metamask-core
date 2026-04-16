@@ -2,18 +2,20 @@ import type { TypedTransaction, TypedTxData } from '@ethereumjs/tx';
 import { isValidPrivate, getBinarySize } from '@ethereumjs/util';
 import { BaseController } from '@metamask/base-controller';
 import type * as encryptorUtils from '@metamask/browser-passworder';
-import { HdKeyring, HdKeyringV2 } from '@metamask/eth-hd-keyring';
+import { HdKeyring } from '@metamask/eth-hd-keyring';
+import { HdKeyring as HdKeyringV2 } from '@metamask/eth-hd-keyring/v2';
 import { normalize as ethNormalize } from '@metamask/eth-sig-util';
-import SimpleKeyring, { SimpleKeyringV2 } from '@metamask/eth-simple-keyring';
+import SimpleKeyring from '@metamask/eth-simple-keyring';
+import { SimpleKeyring as SimpleKeyringV2 } from '@metamask/eth-simple-keyring/v2';
 import type {
   KeyringExecutionContext,
   EthBaseTransaction,
   EthBaseUserOperation,
   EthUserOperation,
   EthUserOperationPatch,
-  KeyringV2,
   KeyringAccount,
 } from '@metamask/keyring-api';
+import type { Keyring as KeyringV2 } from '@metamask/keyring-api/v2';
 import type { EthKeyring } from '@metamask/keyring-internal-api';
 import type { Keyring, KeyringClass } from '@metamask/keyring-utils';
 import type { Messenger } from '@metamask/messenger';
@@ -184,7 +186,8 @@ export type KeyringControllerOptions<
   EncryptionKey = encryptorUtils.EncryptionKey | CryptoKey,
   SupportedKeyDerivationOptions = encryptorUtils.KeyDerivationOptions,
   EncryptionResult extends
-    EncryptionResultConstraint<SupportedKeyDerivationOptions> = DefaultEncryptionResult<SupportedKeyDerivationOptions>,
+    EncryptionResultConstraint<SupportedKeyDerivationOptions> =
+    DefaultEncryptionResult<SupportedKeyDerivationOptions>,
 > = {
   keyringBuilders?: { (): EthKeyring; type: string }[];
   keyringV2Builders?: KeyringV2Builder[];
@@ -320,7 +323,8 @@ export type Encryptor<
   EncryptionKey = encryptorUtils.EncryptionKey | CryptoKey,
   SupportedKeyDerivationParams = encryptorUtils.KeyDerivationOptions,
   EncryptionResult extends
-    EncryptionResultConstraint<SupportedKeyDerivationParams> = DefaultEncryptionResult<SupportedKeyDerivationParams>,
+    EncryptionResultConstraint<SupportedKeyDerivationParams> =
+    DefaultEncryptionResult<SupportedKeyDerivationParams>,
 > = {
   /**
    * Encrypts the given object with the given password.
@@ -724,7 +728,8 @@ export class KeyringController<
   EncryptionKey = encryptorUtils.EncryptionKey | CryptoKey,
   SupportedKeyDerivationOptions = encryptorUtils.KeyDerivationOptions,
   EncryptionResult extends
-    EncryptionResultConstraint<SupportedKeyDerivationOptions> = DefaultEncryptionResult<SupportedKeyDerivationOptions>,
+    EncryptionResultConstraint<SupportedKeyDerivationOptions> =
+    DefaultEncryptionResult<SupportedKeyDerivationOptions>,
 > extends BaseController<
   typeof name,
   KeyringControllerState,
@@ -2099,7 +2104,7 @@ export class KeyringController<
     v2,
     selector,
   }: // Use distinct union tags to ensure proper type narrowing of the selector object.
-  | {
+    | {
         v2: false;
         selector: KeyringSelector<SelectedKeyring>;
       }
